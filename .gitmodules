@@ -1,3 +1,0 @@
-[submodule "ft_printf"]
-	path = ft_printf
-	url = git@github.com:N4t4nis/ft_printf.git

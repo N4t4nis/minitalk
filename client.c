@@ -6,7 +6,7 @@
 /*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:30:05 by nbenhado          #+#    #+#             */
-/*   Updated: 2021/12/30 17:29:23 by nbenhado         ###   ########.fr       */
+/*   Updated: 2021/12/30 22:41:48 by nbenhado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,26 +84,6 @@ void	ftputnbr_base(int	nbr, char	*base)
 	ftputnbr(nbr, taille_base, base);
 }
 
-static void	send_char(char c) 
-{ 
-	int	bit;
-	int f;
-	bit = 7; 
-	while (bit != -1) 
-	{ 
-		f = c & (1 << bit);
-		if (f) 
-		{ 
-			printf("%d ", f);
-		} 
-		else 
-		{ 
-			printf("%d ", f);
-		} 
-		bit--; 
-		usleep(500); 
-	} 
-}
 
 void            client(int pid, char *str)
 {
@@ -114,19 +94,35 @@ void            client(int pid, char *str)
         printf("rate");
 }
 
-void    send_char_with_bits(char c)
+//fonction qui envoie 8 signaux (1 signal pour 1 bits) avec la valeur binaire d'un char (table ascii)
+// exemple : char c = 'a' (donc 97) 
+// 97 = 1100001 en binaire
+// 1 << i va placer un 1 a la derniere case et se decale a chaque iteration : 0000000 / 0000001 / 0000010 / 0000100...
+// on compare 97 et 1 << i en binaire, si 1 et 1 = True / si 1 et 0 = False / si 0 et 0 = False
+// ca envoi donc 8 signaux avec 1 bits dans l'ordre du nombre 97 en binaire
+// kill envoie le signal avec SIGUSR1 si True (1) // SIGUSR2 si False (0)
+// je sleep apres chaque signal envoye pour bien qu'ils s'envoient les uns a la suite des autres
+void    send_char_with_bits(int pid, char c)
 {
 	int i;
-	int y = 3;
-	int f;
-	i = 6;
-	//printf("%d\n", f);
-	//ftputnbr_base(f, "01");
-	while (i >= 0)
+	int is_true;
+	i = 7;
+	while (i != -1)
 	{
-		f = 1 << i;
-		printf("%d ", f);
+		is_true = c & (1 << i);
+		if (is_true)
+		{
+			kill(pid, SIGUSR1);
+			printf("1");
+		}
+		else
+		{
+			kill(pid, SIGUSR2);		
+			printf("0");
+		}
 		i--;
+		usleep(500);
+
 	}
 
 }
@@ -143,13 +139,11 @@ static void handler(int signo)
 
 int main(int ac, char **av)
 {
-    send_char_with_bits('z');
+    send_char_with_bits(ft_atoi(av[1]), 'a');
     //signal(SIGUSR1, &handler);
     //kill(ft_atoi(av[1]), SIGUSR1);
-	printf("\n");
-    send_char('z');
-	printf("\n");
-	ftputnbr_base('z', "01");
+	// printf("\n");
+	// ftputnbr_base('a', "01");
     //client(ft_atoi(av[1]), av[2]);   
     // kill(ft_atoi(av[1]), SIGUSR1);
     return (0);

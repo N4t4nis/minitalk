@@ -6,7 +6,7 @@
 /*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:23:57 by nbenhado          #+#    #+#             */
-/*   Updated: 2021/12/29 20:36:36 by nbenhado         ###   ########.fr       */
+/*   Updated: 2021/12/30 15:11:50 by nbenhado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,24 +35,25 @@ void    serveur()
 static void handler(int signo)
 {
     if (signo == SIGUSR1)
-        printf("test\n");
-
+        printf("Bonne reception du signal 1111\n");
+    else if (signo == SIGUSR2)
+        printf("Bonne reception du signal 2222\n");
+    else
+        printf("Unkown signal");
 }
+
+
 
 
 int main() 
 {   
     /*Un signal est une notification asynchrone envoyée à un processus pour lui     signaler l'apparition d'un événement.
     Signal() renvoie un pointeur vers handler()*/
-    int car;
-    struct sigaction act;
-    
-    act.sa_handler = handler;
-    sigaction(SIGUSR1, &act, NULL);
-    read(0, &car, sizeof(car)) <0) 
-    
+
+    signal(SIGUSR1, &handler);
+    signal(SIGUSR2, &handler);
     int pid_c = getpid();
     ft_printf("listening... %d\n", pid_c);
-    ft_printf("terminating... %d\n", pid_c);
     while (1) pause();
-}
+    ft_printf("terminating... %d\n", pid_c);
+ }

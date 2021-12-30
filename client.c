@@ -6,7 +6,7 @@
 /*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:30:05 by nbenhado          #+#    #+#             */
-/*   Updated: 2021/12/30 15:04:11 by nbenhado         ###   ########.fr       */
+/*   Updated: 2021/12/30 17:29:23 by nbenhado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,22 +84,24 @@ void	ftputnbr_base(int	nbr, char	*base)
 	ftputnbr(nbr, taille_base, base);
 }
 
-static void	send_char(pid_t pid, char c) 
+static void	send_char(char c) 
 { 
-	int	bit; 
+	int	bit;
+	int f;
 	bit = 7; 
 	while (bit != -1) 
 	{ 
-		if (c & (1 << bit)) 
+		f = c & (1 << bit);
+		if (f) 
 		{ 
-			kill(pid, SIGUSR1); 
+			printf("%d ", f);
 		} 
 		else 
 		{ 
-			kill(pid, SIGUSR2); 
+			printf("%d ", f);
 		} 
 		bit--; 
-		usleep(100); 
+		usleep(500); 
 	} 
 }
 
@@ -112,14 +114,20 @@ void            client(int pid, char *str)
         printf("rate");
 }
 
-void    send_char_with_bits()
+void    send_char_with_bits(char c)
 {
-    int i = 'a';
-    int x = 1;
-    int f = i | x;
-    int j = f << 1;
-    printf("%d\n", j);
-    ftputnbr_base(j, "01");
+	int i;
+	int y = 3;
+	int f;
+	i = 6;
+	//printf("%d\n", f);
+	//ftputnbr_base(f, "01");
+	while (i >= 0)
+	{
+		f = 1 << i;
+		printf("%d ", f);
+		i--;
+	}
 
 }
 
@@ -135,10 +143,13 @@ static void handler(int signo)
 
 int main(int ac, char **av)
 {
-    //send_char_with_bits();
+    send_char_with_bits('z');
     //signal(SIGUSR1, &handler);
     //kill(ft_atoi(av[1]), SIGUSR1);
-    send_char(ft_atoi(av[1]), 'c');
+	printf("\n");
+    send_char('z');
+	printf("\n");
+	ftputnbr_base('z', "01");
     //client(ft_atoi(av[1]), av[2]);   
     // kill(ft_atoi(av[1]), SIGUSR1);
     return (0);

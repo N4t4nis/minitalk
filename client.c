@@ -6,7 +6,7 @@
 /*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:30:05 by nbenhado          #+#    #+#             */
-/*   Updated: 2021/12/30 22:41:48 by nbenhado         ###   ########.fr       */
+/*   Updated: 2021/12/31 17:28:22 by nbenhado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,33 +113,48 @@ void    send_char_with_bits(int pid, char c)
 		if (is_true)
 		{
 			kill(pid, SIGUSR1);
-			printf("1");
+			//printf("1");
 		}
 		else
 		{
 			kill(pid, SIGUSR2);		
-			printf("0");
+			//printf("0");
 		}
 		i--;
-		usleep(500);
+		usleep(1000);
 
 	}
+	//printf(" // ");
 
 }
+
+void	send_str(int pid, char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		send_char_with_bits(pid, str[i]);
+		i++;
+	}
+	send_char_with_bits(pid, '\0');
+}
+
 
 //indique ce que fait SIGUSR1 ou SIGUSR2 (gestionnaire)
 // parametre = signal qui l'a activee (1 ou 2 dans notre cas)
-static void handler(int signo)
-{
-    if (signo == SIGUSR1)
-        printf("message envoyer bg\n");
+// static void handler(int signo)
+// {
+//     if (signo == SIGUSR1)
+//         printf("message envoyer bg\n");
 
-}
+// }
 
 
 int main(int ac, char **av)
 {
-    send_char_with_bits(ft_atoi(av[1]), 'a');
+    send_str(ft_atoi(av[1]), av[2]);
     //signal(SIGUSR1, &handler);
     //kill(ft_atoi(av[1]), SIGUSR1);
 	// printf("\n");

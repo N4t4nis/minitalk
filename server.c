@@ -6,7 +6,7 @@
 /*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:23:57 by nbenhado          #+#    #+#             */
-/*   Updated: 2021/12/30 22:50:11 by nbenhado         ###   ########.fr       */
+/*   Updated: 2021/12/31 17:33:29 by nbenhado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,6 @@ void	ftputchar(char c)
 {
 	write(1, &c, 1);
 }
-
-//global
-int bits;
-
 
 void	ftputnbr( long int nb, long int taille, char *base)
 {
@@ -59,8 +55,6 @@ int	ftstrlen(char	*str)
 	}
 	return (index);
 }
-
-
 
 void	ftputnbr_base(int	nbr, char	*base)
 {
@@ -120,32 +114,56 @@ void    serveur()
     ft_printf("%d\n", pid_c);
 }
 
+
+//global
+int bits = 2;
+
 //indique ce que fait SIGUSR1 ou SIGUSR2 (gestionnaire)
 // parametre = signal qui l'a activee (1 ou 2 dans notre cas)
 static void handler(int signo)
 {
+	static char tabs[8];
+	static int i = 0;
+	int y;
+	
     if (signo == SIGUSR1)
-    {
-        printf("Bonne reception du signal 1111\n");
-        bits = 1;
-    }
+		tabs[i] = '1';
+
     else if (signo == SIGUSR2)
-    {
-        printf("Bonne reception du signal 2222\n");
-        bits = 0;
-    }
-    else
-        printf("Unkown signal");
+		tabs[i] = '0';
+	if (i == 7)
+	{
+		i = 0;
+		y = 0;
+		while (i != 7)
+		{
+			if (tabs[i] == '1')
+			{
+				y++;
+				break;
+			}
+			i++;
+		}
+		if (y == 0)
+			exit (0);
+		y = -1;
+		while (++y <= 8)
+			printf("tab[%d] : %c\n", y, tabs[y]);
+		printf("%c", binary_atoi(tabs));
+		i = -1;
+	}
+	i++;
 }
 
 
-char *print_str()
+char *print_char()
 {
     char *tabs;
-    int i = 8;
+    int i = 7;
     int j = 0;
-    
-    tabs = malloc(sizeof(char) * 9);
+	int numb = 9;
+	
+    tabs = malloc(sizeof(char) * numb);
     while (i >= 0)
     {
         tabs[j] = bits + '0';
@@ -161,18 +179,18 @@ char *print_str()
 int main() 
 {   
     int i;
+	int y;
     char *tabs;
-    char letters;
+
     /*Un signal est une notification asynchrone envoyée à un processus pour lui signaler l'apparition d'un événement.
     Signal() renvoie un pointeur vers handler()*/
     signal(SIGUSR1, &handler);
     signal(SIGUSR2, &handler);
     int pid_c = getpid();
     ft_printf("listening... %d\n", pid_c);
-    tabs = print_str();
-    for (i = 0; i <= 8; i++)
-        printf("%c\n", tabs[i]);
-    letters = binary_atoi(tabs);
-    printf("%c", letters);
+	i = 0;
+	while (1)
+		pause();
+
     ft_printf("terminating... %d\n", pid_c);
  }

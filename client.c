@@ -6,7 +6,7 @@
 /*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:30:05 by nbenhado          #+#    #+#             */
-/*   Updated: 2021/12/31 17:28:22 by nbenhado         ###   ########.fr       */
+/*   Updated: 2021/12/31 19:46:11 by nbenhado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void    send_char_with_bits(int pid, char c)
 			//printf("0");
 		}
 		i--;
-		usleep(1000);
+		usleep(5000);
 
 	}
 	//printf(" // ");

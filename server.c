@@ -6,7 +6,7 @@
 /*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:23:57 by nbenhado          #+#    #+#             */
-/*   Updated: 2021/12/31 17:33:29 by nbenhado         ###   ########.fr       */
+/*   Updated: 2021/12/31 19:45:03 by nbenhado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,73 +122,65 @@ int bits = 2;
 // parametre = signal qui l'a activee (1 ou 2 dans notre cas)
 static void handler(int signo)
 {
-	static char tabs[8];
+	static char one_char[8];
+	static char str[1000000];
 	static int i = 0;
+	static int f = 0;
 	int y;
+	int kk;
 	
+	//str = malloc(sizeof(char) * 10);
     if (signo == SIGUSR1)
-		tabs[i] = '1';
+		one_char[i] = '1';
 
     else if (signo == SIGUSR2)
-		tabs[i] = '0';
+		one_char[i] = '0';
 	if (i == 7)
 	{
-		i = 0;
-		y = 0;
-		while (i != 7)
+
+		str[f] = binary_atoi(one_char);
+		if (str[f] == 0)
 		{
-			if (tabs[i] == '1')
-			{
-				y++;
-				break;
-			}
-			i++;
+			ft_putstr_fd(str, 1);
+			exit(0);
 		}
-		if (y == 0)
-			exit (0);
-		y = -1;
-		while (++y <= 8)
-			printf("tab[%d] : %c\n", y, tabs[y]);
-		printf("%c", binary_atoi(tabs));
+		f++;
 		i = -1;
 	}
+	//printf("signal recu");
 	i++;
+	
 }
 
 
 char *print_char()
 {
-    char *tabs;
+    char *one_char;
     int i = 7;
     int j = 0;
 	int numb = 9;
 	
-    tabs = malloc(sizeof(char) * numb);
+    one_char = malloc(sizeof(char) * numb);
     while (i >= 0)
     {
-        tabs[j] = bits + '0';
+        one_char[j] = bits + '0';
         i--;
         j++;
         pause();
     }
-    tabs[j] = '\0';
-    return (tabs);
+    one_char[j] = '\0';
+    return (one_char);
 }
 
 
 int main() 
-{   
-    int i;
-	int y;
-    char *tabs;
-
-    /*Un signal est une notification asynchrone envoyée à un processus pour lui signaler l'apparition d'un événement.
+{      
+	/*Un signal est une notification asynchrone envoyée à un processus pour lui signaler l'apparition d'un événement.
     Signal() renvoie un pointeur vers handler()*/
     signal(SIGUSR1, &handler);
     signal(SIGUSR2, &handler);
     int pid_c = getpid();
     ft_printf("listening... %d\n", pid_c);
-	i = 0;
 	while (1)
 		pause();
 

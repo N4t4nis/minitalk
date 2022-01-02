@@ -121,7 +121,7 @@ void    send_one_octet(int pid, char c)
 			//printf("0");
 		}
 		i--;
-		usleep(100);
+		usleep(300);
 
 	}
 	//printf(" // ");
@@ -154,9 +154,11 @@ void	send_str(int pid, char *str)
 
 int main(int ac, char **av)
 {
+	if (ac != 2)
+		ft_printf("Invalid number of args");
 	if (ft_atoi(av[1]) < 1)
 	{
-		ft_printf("PID non valide, veuillez recommencer");
+		ft_printf("Invalid PID, must be > 0");
 		return (0);
 	}
     send_str(ft_atoi(av[1]), av[2]);

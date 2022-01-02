@@ -6,7 +6,7 @@
 /*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:30:05 by nbenhado          #+#    #+#             */
-/*   Updated: 2021/12/31 19:46:11 by nbenhado         ###   ########.fr       */
+/*   Updated: 2022/01/02 14:00:12 by nbenhado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void            client(int pid, char *str)
 // ca envoi donc 8 signaux avec 1 bits dans l'ordre du nombre 97 en binaire
 // kill envoie le signal avec SIGUSR1 si True (1) // SIGUSR2 si False (0)
 // je sleep apres chaque signal envoye pour bien qu'ils s'envoient les uns a la suite des autres
-void    send_char_with_bits(int pid, char c)
+void    send_one_octet(int pid, char c)
 {
 	int i;
 	int is_true;
@@ -135,10 +135,10 @@ void	send_str(int pid, char *str)
 	i = 0;
 	while (str[i])
 	{
-		send_char_with_bits(pid, str[i]);
+		send_one_octet(pid, str[i]);
 		i++;
 	}
-	send_char_with_bits(pid, '\0');
+	send_one_octet(pid, '\0');
 }
 
 
@@ -155,6 +155,7 @@ void	send_str(int pid, char *str)
 int main(int ac, char **av)
 {
     send_str(ft_atoi(av[1]), av[2]);
+	printf("LEN = %ld\n", ft_strlen(av[2]));
     //signal(SIGUSR1, &handler);
     //kill(ft_atoi(av[1]), SIGUSR1);
 	// printf("\n");

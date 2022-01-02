@@ -6,7 +6,7 @@
 /*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:23:57 by nbenhado          #+#    #+#             */
-/*   Updated: 2021/12/31 19:45:03 by nbenhado         ###   ########.fr       */
+/*   Updated: 2022/01/02 14:02:40 by nbenhado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,16 +118,26 @@ void    serveur()
 //global
 int bits = 2;
 
+void	ftputstr(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		write(1, &str[i], 1);
+		i++;
+	}
+}
+
 //indique ce que fait SIGUSR1 ou SIGUSR2 (gestionnaire)
 // parametre = signal qui l'a activee (1 ou 2 dans notre cas)
 static void handler(int signo)
 {
-	static char one_char[8];
-	static char str[1000000];
+	static char one_char[8] = {0};
+	static char str[100000] = {0};
 	static int i = 0;
 	static int f = 0;
-	int y;
-	int kk;
 	
 	//str = malloc(sizeof(char) * 10);
     if (signo == SIGUSR1)
@@ -141,10 +151,16 @@ static void handler(int signo)
 		str[f] = binary_atoi(one_char);
 		if (str[f] == 0)
 		{
-			ft_putstr_fd(str, 1);
-			exit(0);
+			ftputstr(str);
+			write(1, "\n", 1);
+			// str[0] = '\0';
+			//ft_memset(str, 0, sizeof(str));
+			f = -1;
+			//exit(0);
 		}
 		f++;
+		// one_char[0] = '\0';
+		//ft_memset(one_char, 0, sizeof(one_char));
 		i = -1;
 	}
 	//printf("signal recu");
@@ -179,7 +195,7 @@ int main()
     Signal() renvoie un pointeur vers handler()*/
     signal(SIGUSR1, &handler);
     signal(SIGUSR2, &handler);
-    int pid_c = getpid();
+    unsigned int pid_c = getpid();
     ft_printf("listening... %d\n", pid_c);
 	while (1)
 		pause();

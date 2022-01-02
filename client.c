@@ -121,7 +121,7 @@ void    send_one_octet(int pid, char c)
 			//printf("0");
 		}
 		i--;
-		usleep(5000);
+		usleep(100);
 
 	}
 	//printf(" // ");
@@ -154,14 +154,13 @@ void	send_str(int pid, char *str)
 
 int main(int ac, char **av)
 {
+	if (ft_atoi(av[1]) < 1)
+	{
+		ft_printf("PID non valide, veuillez recommencer");
+		return (0);
+	}
     send_str(ft_atoi(av[1]), av[2]);
-	printf("LEN = %ld\n", ft_strlen(av[2]));
-    //signal(SIGUSR1, &handler);
-    //kill(ft_atoi(av[1]), SIGUSR1);
-	// printf("\n");
-	// ftputnbr_base('a', "01");
-    //client(ft_atoi(av[1]), av[2]);   
-    // kill(ft_atoi(av[1]), SIGUSR1);
+	ft_printf("LEN = %ld\n", ft_strlen(av[2]));
     return (0);
 }
 

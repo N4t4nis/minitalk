@@ -20,70 +20,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-
-void	ftputchar(char c)
-{
-	write(1, &c, 1);
-}
-
-void	ftputnbr( long int nb, long int taille, char *base)
-{
-	if (nb < 0)
-	{
-		ftputchar('-');
-		nb = -nb;
-	}
-	if (nb > taille - 1)
-	{
-		ftputnbr(nb / taille, taille, base);
-		ftputnbr(nb %= taille, taille, base);
-	}
-	else
-	{
-		ftputchar(base[nb]);
-	}
-}
-
-int	ftstrlen(char	*str)
-{
-	int	index;
-
-	index = 0;
-	while (str[index] != '\0')
-	{
-		index++;
-	}
-	return (index);
-}
-
-void	ftputnbr_base(int	nbr, char	*base)
-{
-	int	taille_base;
-	int	i;
-	int	j;
-
-	i = 0;
-	taille_base = ftstrlen(base);
-	while (base[i])
-	{
-		if ((base[i] == '-' || base[i] == '+')
-			|| ((base[i] >= 9 && base[i] <= 13) || (base[i] == 32)))
-			return ;
-		j = i + 1;
-		while (base[j])
-		{
-			if (base[i] == base[j])
-				return ;
-			j++;
-		}
-		i++;
-	}
-	if (base[0] == '\0' || ftstrlen(base) == 1)
-		return ;
-	ftputnbr(nbr, taille_base, base);
-}
-
-int	binary_atoi(const char *nptr)
+unsigned char	binary_atoi(const char *nptr)
 {
 	int		i;
 	int		result;
@@ -99,24 +36,6 @@ int	binary_atoi(const char *nptr)
     }
 	return (result);
 }
-
-
-/*
-L'appel système kill() peut être utilisé pour envoyer n'importe quel 
-signal à n'importe quel processus ou groupe de processus. 
-
-SIGUSR1 User defined signal 1 : Définie par le programmeur. L'action par défaut est la
-mise à mort du processus.
-*/
-void    serveur()
-{
-    int pid_c = getpid();
-    ft_printf("%d\n", pid_c);
-}
-
-
-//global
-int bits = 2;
 
 void	ftputstr(char *str)
 {
@@ -134,60 +53,33 @@ void	ftputstr(char *str)
 // parametre = signal qui l'a activee (1 ou 2 dans notre cas)
 static void handler(int signo)
 {
-	static char one_char[8] = {0};
-	static char str[100000] = {0};
+	static char one_char[8] = {0, };
+	static char str[100000] = {0, };
 	static int i = 0;
 	static int f = 0;
 	
-	//str = malloc(sizeof(char) * 10);
     if (signo == SIGUSR1)
 		one_char[i] = '1';
-
     else if (signo == SIGUSR2)
 		one_char[i] = '0';
+	else
+		ftputstr("Signal non reconnue");
 	if (i == 7)
 	{
-
 		str[f] = binary_atoi(one_char);
 		if (str[f] == 0)
 		{
 			ftputstr(str);
 			write(1, "\n", 1);
-			// str[0] = '\0';
-			//ft_memset(str, 0, sizeof(str));
+			str[0] = '\0';
 			f = -1;
-			//exit(0);
 		}
 		f++;
-		// one_char[0] = '\0';
-		//ft_memset(one_char, 0, sizeof(one_char));
+		one_char[0] = '\0';
 		i = -1;
 	}
-	//printf("signal recu");
 	i++;
-	
 }
-
-
-char *print_char()
-{
-    char *one_char;
-    int i = 7;
-    int j = 0;
-	int numb = 9;
-	
-    one_char = malloc(sizeof(char) * numb);
-    while (i >= 0)
-    {
-        one_char[j] = bits + '0';
-        i--;
-        j++;
-        pause();
-    }
-    one_char[j] = '\0';
-    return (one_char);
-}
-
 
 int main() 
 {      
@@ -199,6 +91,6 @@ int main()
     ft_printf("listening... %d\n", pid_c);
 	while (1)
 		pause();
-
     ft_printf("terminating... %d\n", pid_c);
+	return (0);
  }

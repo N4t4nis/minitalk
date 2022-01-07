@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbenhado <nbenhado@student.42.fr>          +#+  +:+       +#+        */
+/*   By: v3r <v3r@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:30:05 by nbenhado          #+#    #+#             */
-/*   Updated: 2022/01/02 14:00:12 by nbenhado         ###   ########.fr       */
+/*   Updated: 2022/01/07 21:07:07 by v3r              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,30 +19,9 @@
 #include <unistd.h>
 #include <stdio.h>
 
-
-#include <unistd.h>
-
 void	ftputchar(char c)
 {
 	write(1, &c, 1);
-}
-
-void	ftputnbr( long int nb, long int taille, char *base)
-{
-	if (nb < 0)
-	{
-		ftputchar('-');
-		nb = -nb;
-	}
-	if (nb > taille - 1)
-	{
-		ftputnbr(nb / taille, taille, base);
-		ftputnbr(nb %= taille, taille, base);
-	}
-	else
-	{
-		ftputchar(base[nb]);
-	}
 }
 
 int	ftstrlen(char	*str)
@@ -57,80 +36,39 @@ int	ftstrlen(char	*str)
 	return (index);
 }
 
-void	ftputnbr_base(int	nbr, char	*base)
-{
-	int	taille_base;
-	int	i;
-	int	j;
-
-	i = 0;
-	taille_base = ftstrlen(base);
-	while (base[i])
-	{
-		if ((base[i] == '-' || base[i] == '+')
-			|| ((base[i] >= 9 && base[i] <= 13) || (base[i] == 32)))
-			return ;
-		j = i + 1;
-		while (base[j])
-		{
-			if (base[i] == base[j])
-				return ;
-			j++;
-		}
-		i++;
-	}
-	if (base[0] == '\0' || ftstrlen(base) == 1)
-		return ;
-	ftputnbr(nbr, taille_base, base);
-}
-
-
-void            client(int pid, char *str)
-{
-    // envoie le signal SIGUSR1 au pid (donc au serveur), return 0 si ok, sinon -1
-    if (kill(pid, SIGUSR1))
-        ft_putstr_fd(str, 1);
-    else
-        printf("rate");
-}
-
-//fonction qui envoie 8 signaux (1 signal pour 1 bits) avec la valeur binaire d'un char (table ascii)
+//fonction qui envoie 8 signaux (1 signal pour 1 bits) avec la valeur binaire 
+// d'un char (table ascii)
 // exemple : char c = 'a' (donc 97) 
 // 97 = 1100001 en binaire
-// 1 << i va placer un 1 a la derniere case et se decale a chaque iteration : 0000000 / 0000001 / 0000010 / 0000100...
-// on compare 97 et 1 << i en binaire, si 1 et 1 = True / si 1 et 0 = False / si 0 et 0 = False
+// 1 << i va placer un 1 a la derniere case et se decale a 
+// chaque iteration : 0000000 / 0000001 / 0000010 / 0000100...
+// on compare 97 et 1 << i en binaire, 
+// si 1 et 1 = True / si 1 et 0 = False / si 0 et 0 = False
 // ca envoi donc 8 signaux avec 1 bits dans l'ordre du nombre 97 en binaire
 // kill envoie le signal avec SIGUSR1 si True (1) // SIGUSR2 si False (0)
-// je sleep apres chaque signal envoye pour bien qu'ils s'envoient les uns a la suite des autres
-void    send_one_octet(int pid, char c)
+// je sleep apres chaque signal envoye pour bien qu'ils s'envoient 
+// les uns a la suite des autres
+void	send_one_octet(int pid, char c)
 {
-	int i;
-	int is_true;
+	int	i;
+	int	is_true;
+
 	i = 7;
 	while (i != -1)
 	{
 		is_true = c & (1 << i);
 		if (is_true)
-		{
 			kill(pid, SIGUSR1);
-			//printf("1");
-		}
 		else
-		{
-			kill(pid, SIGUSR2);		
-			//printf("0");
-		}
+			kill(pid, SIGUSR2);
 		i--;
 		usleep(300);
-
 	}
-	//printf(" // ");
-
 }
 
 void	send_str(int pid, char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -141,31 +79,18 @@ void	send_str(int pid, char *str)
 	send_one_octet(pid, '\0');
 }
 
-
-//indique ce que fait SIGUSR1 ou SIGUSR2 (gestionnaire)
-// parametre = signal qui l'a activee (1 ou 2 dans notre cas)
-// static void handler(int signo)
-// {
-//     if (signo == SIGUSR1)
-//         printf("message envoyer bg\n");
-
-// }
-
-
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
-	if (ac != 2)
+	if (ac != 3)
 		ft_printf("Invalid number of args");
-	if (ft_atoi(av[1]) < 1)
+	if (ft_atoi(av[1]) < 1 || ac != 3)
 	{
-		ft_printf("Invalid PID, must be > 0");
+		if (ac != 3)
+			ft_printf("Invalid number of args");
+		else
+			ft_printf("Invalid PID, must be > 0");
 		return (0);
 	}
-    send_str(ft_atoi(av[1]), av[2]);
-	ft_printf("LEN = %ld\n", ft_strlen(av[2]));
-    return (0);
+	send_str(ft_atoi(av[1]), av[2]);
+	return (0);
 }
-
-
-
-

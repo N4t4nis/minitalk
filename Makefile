@@ -7,7 +7,7 @@ OBJS_C = $(SRCS_C:.c=.o)
 LIBFT = libft/libft.a
 PRINTF = ft_printf/libftprintf.a
 
-CC = clang
+CC = gcc
 CFLAGS = -Wall -Werror -Wextra
 EXEC_server = server
 EXEC_client = client

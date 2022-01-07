@@ -6,35 +6,16 @@
 /*   By: v3r <v3r@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:30:05 by nbenhado          #+#    #+#             */
-/*   Updated: 2022/01/07 21:07:07 by v3r              ###   ########.fr       */
+/*   Updated: 2022/01/07 21:35:01 by v3r              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf/ft_printf.h"
 #include "libft/libft.h"
-
 #include <sys/types.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdio.h>
-
-void	ftputchar(char c)
-{
-	write(1, &c, 1);
-}
-
-int	ftstrlen(char	*str)
-{
-	int	index;
-
-	index = 0;
-	while (str[index] != '\0')
-	{
-		index++;
-	}
-	return (index);
-}
 
 //fonction qui envoie 8 signaux (1 signal pour 1 bits) avec la valeur binaire 
 // d'un char (table ascii)
@@ -48,7 +29,7 @@ int	ftstrlen(char	*str)
 // kill envoie le signal avec SIGUSR1 si True (1) // SIGUSR2 si False (0)
 // je sleep apres chaque signal envoye pour bien qu'ils s'envoient 
 // les uns a la suite des autres
-void	send_one_octet(int pid, char c)
+static void	send_one_octet(int pid, char c)
 {
 	int	i;
 	int	is_true;
@@ -66,7 +47,7 @@ void	send_one_octet(int pid, char c)
 	}
 }
 
-void	send_str(int pid, char *str)
+static void	send_str(int pid, char *str)
 {
 	int	i;
 

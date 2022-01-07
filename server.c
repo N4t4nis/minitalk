@@ -6,19 +6,16 @@
 /*   By: v3r <v3r@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 15:23:57 by nbenhado          #+#    #+#             */
-/*   Updated: 2022/01/07 21:14:21 by v3r              ###   ########.fr       */
+/*   Updated: 2022/01/07 22:42:07 by v3r              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf/ft_printf.h"
 #include "libft/libft.h"
-
 #include <sys/types.h>
 #include <signal.h>
 #include <unistd.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 static unsigned char	binary_atoi(const char *nptr)
 {
@@ -37,7 +34,7 @@ static unsigned char	binary_atoi(const char *nptr)
 	return (result);
 }
 
-void	ftputstr(char *str)
+static void	ftputstr(char *str)
 {
 	int	i;
 
@@ -53,8 +50,8 @@ void	ftputstr(char *str)
 // parametre = signal qui l'a activee (1 ou 2 dans notre cas)
 static void	handler(int signo)
 {
-	static char	one_char[8] = {0, };
-	static char	str[100000] = {0, };
+	static char	one_char[8] = {0};
+	static char	str[10000000] = {0};
 	static int	i = 0;
 	static int	f = 0;
 
@@ -63,7 +60,7 @@ static void	handler(int signo)
 	else if (signo == SIGUSR2)
 		one_char[i] = '0';
 	else
-		ftputstr("Signal non reconnue");
+		ft_printf("Unknown signal");
 	if (i == 7)
 	{
 		str[f] = binary_atoi(one_char);
@@ -71,11 +68,9 @@ static void	handler(int signo)
 		{
 			ftputstr(str);
 			write(1, "\n", 1);
-			str[0] = '\0';
 			f = -1;
 		}
 		f++;
-		one_char[0] = '\0';
 		i = -1;
 	}
 	i++;

@@ -47,17 +47,38 @@ static void	send_one_octet(int pid, char c)
 	}
 }
 
+static void	send_pid(int pid)
+{
+	unsigned int pid_c;
+	char *pid_s;
+	int i;
+
+	i = -1;
+	pid_c = getpid();
+	pid_s = ft_itoa(pid_c);
+	while (pid_s[++i])
+		send_one_octet(pid, pid_s[i]);	
+	send_one_octet(pid, 'Z');
+	free(pid_s);
+}
+
 static void	send_str(int pid, char *str)
 {
 	int	i;
 
-	i = 0;
-	while (str[i])
-	{
+	i = -1;
+	while (str[++i])
 		send_one_octet(pid, str[i]);
-		i++;
-	}
 	send_one_octet(pid, '\0');
+}
+
+static void handler(int signo)
+{
+	if (signo == SIGUSR1)
+		ft_printf("le serveur a recu et afficher le message");
+	else
+		ft_printf("pas recu");
+
 }
 
 int	main(int ac, char **av)
@@ -72,6 +93,8 @@ int	main(int ac, char **av)
 			ft_printf("Invalid PID, must be > 0");
 		return (0);
 	}
+	signal(SIGUSR1, &handler);
+	send_pid(ft_atoi(av[1]));
 	send_str(ft_atoi(av[1]), av[2]);
 	return (0);
 }

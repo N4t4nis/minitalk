@@ -98,7 +98,8 @@ static void	handler(int signo)
 		buff[len] = binary_atoi(one_char);
 		if (buff[len] == 0)
 		{
-			str = malloc(sizeof(char) * ft_atoi(buff));
+			//printf("atttt = %d\n", ft_atoi(buff));
+			str = malloc(sizeof(char) * ft_atoi(buff) + 1);
 			interupt = 0;
 		}
 		len++;
@@ -110,6 +111,8 @@ static void	handler(int signo)
 		if (str[f] == 0 && interupt > 0)
 		{
 			print_str(str, interupt, &f);
+			interupt = -1;
+			len = 0;
 		}
 		if (str[f] == 'Z' && interupt == 0)
 			interupt = f;

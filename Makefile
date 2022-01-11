@@ -18,10 +18,10 @@ $(NAME) : $(EXEC_server) $(EXEC_client)
 $(EXEC_server) : $(OBJS_S)
 	make -C libft/
 	make -C ft_printf/
-	$(CC) $(CFLAGS) -o $@ -g -fsanitize=address $(OBJS_S) $(LIBFT) $(PRINTF) 
+	$(CC) $(CFLAGS) -o $@  $(OBJS_S) $(LIBFT) $(PRINTF) 
 
 $(EXEC_client) : $(OBJS_C)
-	$(CC) $(CFLAGS) -o $@ -g -fsanitize=address $(OBJS_C) $(LIBFT) $(PRINTF)
+	$(CC) $(CFLAGS) -o $@  $(OBJS_C) $(LIBFT) $(PRINTF)
 
 all : $(NAME)
 

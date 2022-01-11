@@ -64,10 +64,15 @@ static void	send_str(int pid, char *str)
 	int				i;
 	unsigned int	pid_c;
 	char			*pid_s;
+	char			*len_s;
 
-	i = -1;
 	pid_c = getpid();
 	pid_s = ft_itoa(pid_c);
+	len_s = ft_itoa(ft_strlen(str));
+	i = -1;
+	while (len_s[++i])
+		send_one_octet(pid, len_s[i]);
+	send_one_octet(pid, '\0');
 	while (pid_s[++i])
 		send_one_octet(pid, pid_s[i]);
 	send_one_octet(pid, 'Z');

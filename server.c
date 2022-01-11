@@ -80,10 +80,12 @@ static void	print_str(char *str, int index, int *f)
 static void	handler(int signo)
 {
 	static char	one_char[8] = {0};
-	static char	str[10000000] = {0};
+	static char	*str = NULL;
+	static char	buff[12] = {0};
+	static int	len = 0;
 	static int	i = 0;
 	static int	f = 0;
-	static int	interupt = 0;
+	static int	interupt = -1;
 
 	if (signo == SIGUSR1)
 		one_char[i] = '1';
@@ -91,11 +93,24 @@ static void	handler(int signo)
 		one_char[i] = '0';
 	else
 		ft_printf("Unknown signal");
-	if (i == 7)
+	if (i == 7 && interupt == -1)
+	{
+		buff[len] = binary_atoi(one_char);
+		if (buff[len] == 0)
+		{
+			str = malloc(sizeof(char) * ft_atoi(buff));
+			interupt = 0;
+		}
+		len++;
+		i = -1;
+	}
+	if (i == 7 && interupt >= 0)
 	{
 		str[f] = binary_atoi(one_char);
 		if (str[f] == 0 && interupt > 0)
+		{
 			print_str(str, interupt, &f);
+		}
 		if (str[f] == 'Z' && interupt == 0)
 			interupt = f;
 		f++;

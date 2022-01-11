@@ -17,6 +17,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+static void	bad_pid(void)
+{
+	ft_printf("Server didnt received your message, may be bad PID\n");
+	exit(0);
+}
+
 //fonction qui envoie 8 signaux (1 signal pour 1 bits) avec la valeur binaire 
 // d'un char (table ascii)
 // exemple : char c = 'a' (donc 97) 
@@ -39,53 +45,48 @@ static void	send_one_octet(int pid, char c)
 	{
 		is_true = c & (1 << i);
 		if (is_true)
-			kill(pid, SIGUSR1);
+		{
+			if (kill(pid, SIGUSR1) == -1)
+				bad_pid();
+		}
 		else
-			kill(pid, SIGUSR2);
+		{
+			if (kill(pid, SIGUSR2) == -1)
+				bad_pid();
+		}
 		i--;
 		usleep(300);
 	}
 }
 
-static void	send_pid(int pid)
+static void	send_str(int pid, char *str)
 {
-	unsigned int pid_c;
-	char *pid_s;
-	int i;
+	int				i;
+	unsigned int	pid_c;
+	char			*pid_s;
 
 	i = -1;
 	pid_c = getpid();
 	pid_s = ft_itoa(pid_c);
 	while (pid_s[++i])
-		send_one_octet(pid, pid_s[i]);	
+		send_one_octet(pid, pid_s[i]);
 	send_one_octet(pid, 'Z');
-	free(pid_s);
-}
-
-static void	send_str(int pid, char *str)
-{
-	int	i;
-
 	i = -1;
 	while (str[++i])
 		send_one_octet(pid, str[i]);
 	send_one_octet(pid, '\0');
+	free(pid_s);
 }
 
-static void handler(int signo)
+static void	handler(int signo)
 {
 	if (signo == SIGUSR1)
-		ft_printf("le serveur a recu et afficher le message");
-	else
-		ft_printf("pas recu");
-
+		ft_printf("Server receveid message and displayed it");
 }
 
 int	main(int ac, char **av)
 {
-	if (ac != 3)
-		ft_printf("Invalid number of args");
-	if (ft_atoi(av[1]) < 1 || ac != 3)
+	if (ac != 3 || ft_atoi(av[1]) < 1)
 	{
 		if (ac != 3)
 			ft_printf("Invalid number of args");
@@ -94,7 +95,6 @@ int	main(int ac, char **av)
 		return (0);
 	}
 	signal(SIGUSR1, &handler);
-	send_pid(ft_atoi(av[1]));
 	send_str(ft_atoi(av[1]), av[2]);
 	return (0);
 }

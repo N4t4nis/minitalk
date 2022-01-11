@@ -16,7 +16,6 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
-#define STRLENGHT 1000000
 
 static unsigned char	binary_atoi(const char *nptr)
 {
@@ -33,20 +32,6 @@ static unsigned char	binary_atoi(const char *nptr)
 		i++;
 	}
 	return (result);
-}
-
-static void	print_str(char *str, int index)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	while (index <= i)
-	{
-		write(1, &str[index], 1);
-		index++;
-	}
 }
 
 int	ftatoi(const char *nptr, int index)
@@ -73,15 +58,32 @@ int	ftatoi(const char *nptr, int index)
 	return (result);
 }
 
-// indique ce que fait SIGUSR1 ou SIGUSR2 (gestionnaire)
-// parametre = signal qui l'a activee (1 ou 2 dans notre cas)
+static void	print_str(char *str, int index, int *f)
+{
+	int	i;
+	int	start;
+
+	start = index + 1;
+	i = 0;
+	while (str[i])
+		i++;
+	while (start <= i)
+	{
+		write(1, &str[start], 1);
+		start++;
+	}
+	write(1, "\n", 1);
+	kill(ftatoi(str, index), SIGUSR1);
+	*f = -1;
+}
+
 static void	handler(int signo)
 {
 	static char	one_char[8] = {0};
-	static char	str[STRLENGHT] = {0};
+	static char	str[10000000] = {0};
 	static int	i = 0;
 	static int	f = 0;
-	static int interupt = 0;
+	static int	interupt = 0;
 
 	if (signo == SIGUSR1)
 		one_char[i] = '1';
@@ -93,15 +95,9 @@ static void	handler(int signo)
 	{
 		str[f] = binary_atoi(one_char);
 		if (str[f] == 0 && interupt > 0)
-		{
-			print_str(str, interupt);
-			kill(ftatoi(str, interupt), SIGUSR1);
-			write(1, "\n", 1);
-			f = -1;
-		}
+			print_str(str, interupt, &f);
 		if (str[f] == 'Z' && interupt == 0)
-			interupt = f--;
-
+			interupt = f;
 		f++;
 		i = -1;
 	}
@@ -118,7 +114,7 @@ int	main(void)
 	pid_c = getpid();
 	signal(SIGUSR1, &handler);
 	signal(SIGUSR2, &handler);
-	ft_printf("listening... PID = [%d]\n", pid_c);
+	ft_printf("listening... PID: [%d]\n", pid_c);
 	while (1)
 		pause();
 	return (0);

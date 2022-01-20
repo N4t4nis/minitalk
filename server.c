@@ -16,6 +16,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
+#define MAXSTRLEN 10000000
 
 static unsigned char	binary_atoi(const char *nptr)
 {
@@ -73,14 +74,18 @@ static void	print_str(char *str, int index, int *f)
 		start++;
 	}
 	write(1, "\n", 1);
-	kill(ftatoi(str, index), SIGUSR1);
+	if (kill(ftatoi(str, index), SIGUSR1) == -1)
+	{	
+		ft_printf("Client didnt received your message, may be bad PID\n");
+		exit(1);
+	}
 	*f = -1;
 }
 
 static void	handler(int signo)
 {
 	static char	one_char[8] = {0};
-	static char	str[10000000] = {0};
+	static char	str[MAXSTRLEN] = {0};
 	static int	i = 0;
 	static int	f = 0;
 	static int	interupt = 0;

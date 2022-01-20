@@ -20,7 +20,7 @@
 static void	bad_pid(void)
 {
 	ft_printf("Server didnt received your message, may be bad PID\n");
-	exit(0);
+	exit(1);
 }
 
 //fonction qui envoie 8 signaux (1 signal pour 1 bits) avec la valeur binaire 
@@ -92,7 +92,7 @@ int	main(int ac, char **av)
 			ft_printf("Invalid number of args");
 		else
 			ft_printf("Invalid PID, must be > 0");
-		return (0);
+		return (1);
 	}
 	signal(SIGUSR1, &handler);
 	send_str(ft_atoi(av[1]), av[2]);
